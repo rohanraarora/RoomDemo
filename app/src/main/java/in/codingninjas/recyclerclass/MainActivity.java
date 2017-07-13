@@ -1,6 +1,8 @@
 package in.codingninjas.recyclerclass;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,13 +19,14 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ADD = 100;
 
     RecyclerView mRecyclerView;
-    ArrayList<Note> mNotes;
+    List<Note> mNotes = new ArrayList<>();
     RecyclerAdapter mAdapter;
 
     @Override
@@ -43,8 +46,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        NoteDatabase db = NoteDatabase.getInstance(this);
+        final NoteDao noteDao = db.noteDao();
+        new AsyncTask<Void,Void,List<Note>>(){
+
+            @Override
+            protected List<Note> doInBackground(Void... voids) {
+                return noteDao.getAllNotes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Note> notes) {
+                mNotes.clear();
+                mNotes.addAll(notes);
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        mNotes = new ArrayList<>();
+
         mAdapter = new RecyclerAdapter(this, mNotes, new RecyclerAdapter.NotesClickListener() {
             @Override
             public void onItemClick(View view, int position) {

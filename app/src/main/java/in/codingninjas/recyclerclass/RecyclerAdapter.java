@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rohan on 12/07/17.
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.NoteViewHolder> {
 
     private Context mContext;
-    private ArrayList<Note> mNotes;
+    private List<Note> mNotes;
     private NotesClickListener mListener;
 
     public interface NotesClickListener {
@@ -26,7 +27,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.NoteVi
     }
 
 
-    public RecyclerAdapter(Context context, ArrayList<Note> notes,NotesClickListener listener){
+    public RecyclerAdapter(Context context, List<Note> notes,NotesClickListener listener){
         mContext = context;
         mNotes = notes;
         mListener = listener;

@@ -1,6 +1,8 @@
 package in.codingninjas.recyclerclass;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,12 +22,28 @@ public class AddNote extends AppCompatActivity {
     }
 
     public void addNote(View view){
-        Note note = new Note(mTitleEditText.getEditableText().toString(),
+        final Note note = new Note(mTitleEditText.getEditableText().toString(),
                 mDescEditText.getEditableText().toString());
-        Intent result = new Intent();
-        result.putExtra("title",note.getTitle());
-        result.putExtra("desc",note.getDescription());
-        setResult(RESULT_OK,result);
-        this.finish();
+        NoteDatabase db = NoteDatabase.getInstance(this);
+        final NoteDao dao = db.noteDao();
+        new AsyncTask<Void,Void,Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                 dao.insertNote(note);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Intent result = new Intent();
+                result.putExtra("title",note.getTitle());
+                result.putExtra("desc",note.getDescription());
+                setResult(RESULT_OK,result);
+                AddNote.this.finish();
+
+            }
+        }.execute();
+
     }
 }

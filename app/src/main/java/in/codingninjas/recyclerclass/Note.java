@@ -1,19 +1,43 @@
 package in.codingninjas.recyclerclass;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 /**
  * Created by rohan on 12/07/17.
  */
 
+@Entity(tableName = "notes")
 public class Note {
+
+    @PrimaryKey(autoGenerate = true)
+    private long id;
 
     private String title;
     private String description;
 
-    public Note(String title,String desc){
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Note(String title, String desc){
         this.title = title;
         this.description = desc;
+    }
+
+    public Note(long id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
     }
 
     public String getTitle() {
