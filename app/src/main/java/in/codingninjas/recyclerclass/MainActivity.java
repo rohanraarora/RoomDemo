@@ -1,5 +1,6 @@
 package in.codingninjas.recyclerclass;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,8 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_ADD = 100;
+
     RecyclerView mRecyclerView;
     ArrayList<Note> mNotes;
     RecyclerAdapter mAdapter;
@@ -34,16 +37,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int size = mNotes.size();
-                Note note = new Note("Title " + size,"Description " + size);
-                mNotes.add(note);
-                mAdapter.notifyItemInserted(size);
-                mRecyclerView.smoothScrollToPosition(size);
+
+                Intent add = new Intent(MainActivity.this,AddNote.class);
+                startActivityForResult(add,REQUEST_ADD);
             }
         });
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        mNotes = Note.getRandomNotes(5);
+        mNotes = new ArrayList<>();
         mAdapter = new RecyclerAdapter(this, mNotes, new RecyclerAdapter.NotesClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -99,10 +100,22 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_reset) {
             mNotes.clear();
-            mNotes.addAll(Note.getRandomNotes(5));
             mAdapter.notifyDataSetChanged();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_ADD && resultCode == RESULT_OK){
+            String title = data.getStringExtra("title");
+            String desc = data.getStringExtra("desc");
+            Note note = new Note(title,desc);
+            int size = mNotes.size();
+            mNotes.add(note);
+            mAdapter.notifyItemInserted(size);
+        }
     }
 }
